@@ -45,12 +45,12 @@ export async function register(req: Request, res: Response) {
 
 export async function logIn(req: Request, res: Response) {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     // Log input details
-    console.log("Login attempt for username:", username);
+    console.log("Login attempt for email:", email);
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
     console.log("User found");
 
     if (!user) {
