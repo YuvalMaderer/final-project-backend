@@ -24,6 +24,7 @@ interface ILocation {
 }
 
 interface IHost {
+  language: string[];
   _id: string;
   fullname: string;
   location: string;
@@ -42,6 +43,7 @@ interface IHome extends Document {
   amenities: string[];
   bathrooms: number;
   bedrooms: number;
+  beds: number;
   roomType: string;
   host: IHost;
   location: ILocation;
@@ -107,6 +109,7 @@ const locationSchema = new Schema({
 });
 
 const hostSchema = new Schema({
+  language: { type: [String], require: true },
   _id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -165,6 +168,9 @@ const homeSchema = new Schema({
   bedrooms: {
     type: Number,
     required: true,
+  },
+  bads: {
+    type: Number,
   },
   roomType: {
     type: String,
