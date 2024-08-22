@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import User from "./src/models/user-model";
+import Home from "./src/models/home-model"; // Assuming you've saved the Home schema in home-model.js
+import { spaces } from "./spaces";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -20,10 +22,11 @@ mongoose
     process.exit(1);
   });
 
-const seedUsers = async () => {
+const seedUsersAndHomes = async () => {
   try {
-    // Clear existing users
+    // Clear existing users and homes
     await User.deleteMany({});
+    await Home.deleteMany({});
 
     // Hash the password
     const hashedPassword = await bcrypt.hash("password123", 10);
@@ -48,44 +51,22 @@ const seedUsers = async () => {
         reviews: [],
         wishlists: [],
       },
-      {
-        email: "alice.jones@example.com",
-        password: hashedPassword,
-        firstName: "Alice",
-        lastName: "Jones",
-        birthday: new Date("1988-03-03"),
-        reviews: [],
-        wishlists: [],
-      },
-      {
-        email: "bob.brown@example.com",
-        password: hashedPassword,
-        firstName: "Bob",
-        lastName: "Brown",
-        birthday: new Date("1985-04-04"),
-        reviews: [],
-        wishlists: [],
-      },
-      {
-        email: "charlie.white@example.com",
-        password: hashedPassword,
-        firstName: "Charlie",
-        lastName: "White",
-        birthday: new Date("1983-05-05"),
-        reviews: [],
-        wishlists: [],
-      },
+      // Add more users as needed...
     ];
 
     // Insert users into the database
     await User.insertMany(users);
     console.log("Users seeded successfully!");
+
+    // Insert homes into the database
+    await Home.insertMany(spaces);
+    console.log("Homes seeded successfully!");
   } catch (err) {
-    console.error("Error seeding users:", err);
+    console.error("Error seeding data:", err);
   } finally {
     // Close the database connection
     mongoose.connection.close();
   }
 };
 
-seedUsers();
+seedUsersAndHomes();
