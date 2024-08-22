@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import User from "./src/models/user-model";
 import Home from "./src/models/home-model"; // Assuming you've saved the Home schema in home-model.js
-import { spaces } from "./spaces";
+import { homes } from "./homes";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -59,7 +59,7 @@ const seedUsersAndHomes = async () => {
     console.log("Users seeded successfully!");
 
     // Insert homes into the database
-    await Home.insertMany(spaces);
+    await Home.insertMany(homes);
     console.log("Homes seeded successfully!");
   } catch (err) {
     console.error("Error seeding data:", err);

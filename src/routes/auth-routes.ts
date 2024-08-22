@@ -1,4 +1,10 @@
-import { Router, Request, Response, NextFunction, RequestHandler } from "express";
+import {
+  Router,
+  Request,
+  Response,
+  NextFunction,
+  RequestHandler,
+} from "express";
 import {
   register,
   logIn,
@@ -6,10 +12,9 @@ import {
   getAllUsers,
 } from "../controllers/auth-controller";
 import { verifyToken } from "../middelware/auth-middelware";
-const {
-  verifyGoogle,
-  signWithGoogle,
-} = require("../controllers/google.controller");
+import { signWithGoogle, verifyGoogle } from "../controllers/google-controller";
+
+
 type Middleware = (req: Request, res: Response, next: NextFunction) => void;
 
 const typedSignGoogle = signWithGoogle as RequestHandler;
@@ -22,4 +27,3 @@ authRoutes.post("/login", logIn);
 authRoutes.get("/loggedInUser", verifyToken, getUserById);
 authRoutes.post("/google", typedVerifyGoogle, typedSignGoogle);
 // authRoutes.get("/", verifyToken, getAllUsers);
-
