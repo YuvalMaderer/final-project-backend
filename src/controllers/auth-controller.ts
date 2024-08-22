@@ -71,7 +71,7 @@ export async function logIn(req: Request, res: Response) {
     }
 
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     // Send token in response to the client, not the user object!
