@@ -7,9 +7,14 @@ export interface IUser extends Document {
   lastName: string;
   birthday: Date;
   // reviews: string[];
-  wishlists: string[];
+  wishlists: IWhishlist[];
   picture?: string;
   phoneNumber?: string;
+}
+
+interface IWhishlist {
+  title: string;
+  list: string[];
 }
 
 const userSchema = new Schema<IUser>({
@@ -20,7 +25,7 @@ const userSchema = new Schema<IUser>({
   birthday: { type: Date, required: true },
   picture: { type: String },
   phoneNumber: { type: String },
-  wishlists: { type: [String], default: [] },
+  wishlists: { type: [Object], default: [] },
 });
 
 const User = model<IUser>("User", userSchema);
