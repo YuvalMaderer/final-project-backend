@@ -1,5 +1,5 @@
 export interface QueryFilter {
-  types?: string;
+  type?: string;
   roomType?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -13,12 +13,12 @@ export interface QueryFilter {
 }
 
 // Define the criteria function
-function criteria(query: QueryFilter): Record<string, any> {
+function makeCriteria(query: QueryFilter): Record<string, any> {
   const res: Record<string, any> = {};
 
   // Type
-  if (query.types) {
-    res.types = { $regex: query.types, $options: "i" };
+  if (query.type) {
+    res.type = { $regex: query.type, $options: "i" };
   }
 
   // Room Type
@@ -80,4 +80,4 @@ function criteria(query: QueryFilter): Record<string, any> {
   return res;
 }
 
-export default criteria;
+export default makeCriteria;
