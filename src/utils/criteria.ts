@@ -6,10 +6,10 @@ export interface QueryFilter {
   bedrooms?: number;
   beds?: number;
   bathrooms?: number;
-  hostLanguage?: string[];
-  amenities?: string[];
+  hostLanguage?: string | string[];
+  amenities?: string | string[];
   capacity?: number;
-  location?: string[]; // Array of possible locations
+  location?: string; // Single location
 }
 
 // Define the criteria function
@@ -58,24 +58,31 @@ function makeCriteria(query: QueryFilter): Record<string, any> {
   }
 
   // Host Language
-  if (query.hostLanguage && query.hostLanguage.length > 0) {
-    res.hostLanguage = { $in: query.hostLanguage };
+  if (query.hostLanguage) {
+    const languages = Array.isArray(query.hostLanguage)
+      ? query.hostLanguage
+      : query.hostLanguage.split(","); // Correctly split by comma
+    res["host.language"] = { $in: languages };
   }
 
   // Amenities
-  if (query.amenities && query.amenities.length > 0) {
-    res.amenities = { $all: query.amenities };
+  if (query.amenities) {
+    const amenities = Array.isArray(query.amenities)
+      ? query.amenities
+      : query.amenities.split(","); // Correctly split by comma
+    res.amenities = { $in: amenities };
   }
 
   // Location
   if (query.location) {
-    const locationRegex = { $regex: query.location, $options: "i" };
     res.$or = [
-      { "loc.country": locationRegex },
-      { "loc.city": locationRegex },
-      { "loc.address": locationRegex },
+      { "loc.country": { $regex: query.location, $options: "i" } },
+      { "loc.city": { $regex: query.location, $options: "i" } },
+      { "loc.address": { $regex: query.location, $options: "i" } },
     ];
   }
+
+  console.log("Generated criteria:", JSON.stringify(res, null, 2)); // Additional debugging output
 
   return res;
 }
