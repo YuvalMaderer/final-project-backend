@@ -50,6 +50,12 @@ interface IHome extends Document {
   loc: ILocation;
   reviews: IReview[];
   likedByUsers: mongoose.Schema.Types.ObjectId[];
+  bookingOptions: {
+    InstantBook: boolean;
+    SelfCheckIn: boolean;
+    AllowsPets: boolean;
+  };
+  accessibility: string[];
 }
 
 const reviewSchema = new Schema({
@@ -191,6 +197,12 @@ const homeSchema = new Schema<IHome>({
     type: [mongoose.Schema.Types.ObjectId],
     default: [],
   },
+  bookingOptions: {
+    InstantBook: { type: Boolean, required: true },
+    SelfCheckIn: { type: Boolean, required: true },
+    AllowsPets: { type: Boolean, required: true },
+  },
+  accessibility: { type: [String], default: [] },
 });
 
 const Home = mongoose.model<IHome>("Home", homeSchema);
