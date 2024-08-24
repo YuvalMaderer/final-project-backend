@@ -6,6 +6,7 @@ import cors from "cors";
 import { connectDB } from "./config/db";
 import { authRoutes } from "./routes/auth-routes";
 import { homeRoutes } from "./routes/homes-routes";
+import { reservationRoutes } from "./routes/reservation-routes";
 // import socketMiddleware from "./middelware/auth-req";
 
 const PORT = process.env.PORT || 3000;
@@ -31,6 +32,7 @@ async function main() {
   // Routes
   app.use("/api/auth", authRoutes);
   app.use("/api/homes", homeRoutes);
+  app.use("/api/reservation", reservationRoutes);
 
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

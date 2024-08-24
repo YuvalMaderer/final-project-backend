@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import User from "./src/models/user-model";
-import Home from "./src/models/home-model"; // Assuming you've saved the Home schema in home-model.js
-import { homes } from "./homes";
+import Home from "./src/models/home-model";
+import Reservation from "./src/models/reservation-model";
+import { homes } from "./homes"; // Assuming homes.ts exports an array of homes
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -22,11 +23,12 @@ mongoose
     process.exit(1);
   });
 
-const seedUsersAndHomes = async () => {
+const seedUsersHomesReservations = async () => {
   try {
-    // Clear existing users and homes
+    // Clear existing users, homes, and reservations
     await User.deleteMany({});
     await Home.deleteMany({});
+    await Reservation.deleteMany({});
 
     // Hash the password
     const hashedPassword = await bcrypt.hash("password123", 10);
@@ -51,16 +53,68 @@ const seedUsersAndHomes = async () => {
         reviews: [],
         wishlists: [],
       },
-      // Add more users as needed...
     ];
 
     // Insert users into the database
-    await User.insertMany(users);
+    const insertedUsers = await User.insertMany(users);
     console.log("Users seeded successfully!");
 
     // Insert homes into the database
-    await Home.insertMany(homes);
+    const insertedHomes = await Home.insertMany(homes);
     console.log("Homes seeded successfully!");
+
+    // Hardcoded Reservations
+    const reservations = [
+      {
+        user: insertedUsers[0]._id, // John Doe
+        host: insertedHomes[0].host, // Host from the first home
+        home: insertedHomes[0]._id, // First home
+        startDate: new Date("2024-09-01"),
+        endDate: new Date("2024-09-06"),
+        totalPrice: insertedHomes[0].price * 5,
+        status: "confirmed",
+      },
+      {
+        user: insertedUsers[1]._id, // Jane Smith
+        host: insertedHomes[1].host, // Host from the second home
+        home: insertedHomes[1]._id, // Second home
+        startDate: new Date("2024-09-10"),
+        endDate: new Date("2024-09-15"),
+        totalPrice: insertedHomes[1].price * 5,
+        status: "confirmed",
+      },
+      {
+        user: insertedUsers[0]._id, // John Doe
+        host: insertedHomes[1].host, // Host from the second home
+        home: insertedHomes[1]._id, // Second home
+        startDate: new Date("2024-10-01"),
+        endDate: new Date("2024-10-06"),
+        totalPrice: insertedHomes[1].price * 5,
+        status: "pending",
+      },
+      {
+        user: insertedUsers[1]._id, // Jane Smith
+        host: insertedHomes[0].host, // Host from the first home
+        home: insertedHomes[0]._id, // First home
+        startDate: new Date("2024-11-01"),
+        endDate: new Date("2024-11-06"),
+        totalPrice: insertedHomes[0].price * 5,
+        status: "cancelled",
+      },
+      {
+        user: insertedUsers[0]._id, // John Doe
+        host: insertedHomes[0].host, // Host from the first home
+        home: insertedHomes[0]._id, // First home
+        startDate: new Date("2024-12-01"),
+        endDate: new Date("2024-12-06"),
+        totalPrice: insertedHomes[0].price * 5,
+        status: "confirmed",
+      },
+    ];
+
+    // Insert reservations into the database
+    await Reservation.insertMany(reservations);
+    console.log("Reservations seeded successfully!");
   } catch (err) {
     console.error("Error seeding data:", err);
   } finally {
@@ -69,4 +123,4 @@ const seedUsersAndHomes = async () => {
   }
 };
 
-seedUsersAndHomes();
+seedUsersHomesReservations();
