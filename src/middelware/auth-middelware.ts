@@ -9,7 +9,7 @@ const { JWT_SECRET } = process.env;
 //interface
 export interface CustomRequest extends Request {
   userId?: string; // or number, depending on your userId type
-
+  homeId?: string;
 }
 
 export interface JwtPayload {
