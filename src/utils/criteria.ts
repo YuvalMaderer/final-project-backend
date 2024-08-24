@@ -9,6 +9,12 @@ export interface QueryFilter {
   hostLanguage?: string | string[];
   amenities?: string | string[];
   capacity?: number;
+  accessibility?: string | string[];
+  bookingOptions?: {
+    InstantBook?: boolean;
+    SelfCheckIn?: boolean;
+    AllowsPets?: boolean;
+  };
   location?: string; // Single location
 }
 
@@ -71,6 +77,26 @@ function makeCriteria(query: QueryFilter): Record<string, any> {
       ? query.amenities
       : query.amenities.split(","); // Correctly split by comma
     res.amenities = { $in: amenities };
+  }
+  // Accessibility
+  if (query.accessibility) {
+    const accessibility = Array.isArray(query.accessibility)
+      ? query.accessibility
+      : query.accessibility.split(","); // Correctly split by comma
+    res.accessibility = { $in: accessibility };
+  }
+
+  // Booking Options
+  if (query.bookingOptions) {
+    if (query.bookingOptions.InstantBook !== undefined) {
+      res["bookingOptions.InstantBook"] = query.bookingOptions.InstantBook;
+    }
+    if (query.bookingOptions.SelfCheckIn !== undefined) {
+      res["bookingOptions.SelfCheckIn"] = query.bookingOptions.SelfCheckIn;
+    }
+    if (query.bookingOptions.AllowsPets !== undefined) {
+      res["bookingOptions.AllowsPets"] = query.bookingOptions.AllowsPets;
+    }
   }
 
   // Location
