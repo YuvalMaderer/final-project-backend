@@ -192,7 +192,8 @@ async function deleteReservation(req: CustomRequest, res: Response) {
 
     if (!reservation) {
       return res.status(404).json({
-        error: "Reservation not found",
+        error:
+          "reservation-controller deleteReservation: Reservation not found",
       });
     }
 
@@ -202,18 +203,25 @@ async function deleteReservation(req: CustomRequest, res: Response) {
       reservation.host.toString() !== userId
     ) {
       return res.status(403).json({
-        error: "You are not authorized to delete this reservation",
+        error:
+          "reservation-controller deleteReservation: You are not authorized to delete this reservation",
       });
     }
 
     // Delete the reservation
     await Reservation.findByIdAndDelete(reservationId);
 
-    res.status(200).json({ message: "Reservation deleted successfully" });
+    res.status(200).json({
+      message:
+        "reservation-controller deleteReservation: Reservation deleted successfully",
+    });
   } catch (error) {
-    console.error("Error deleting reservation:", error);
+    console.error(
+      "reservation-controller deleteReservation: Error deleting reservation:",
+      error
+    );
     res.status(500).json({
-      error: "Internal server error",
+      error: "reservation-controller deleteReservation: Internal server error",
     });
   }
 }

@@ -39,7 +39,7 @@ async function getHomesForHomePage(req: Request, res: Response) {
 
 async function getAllHomesByFilter(req: Request, res: Response) {
   const { query } = req;
-  const criteria = makeCriteria(req.query);
+  const criteria = await makeCriteria(req.query);
   let page: number = Number(query.page) || 1;
   if (page < 1) page = 1;
 

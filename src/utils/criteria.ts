@@ -1,3 +1,5 @@
+import Reservation from "../models/reservation-model";
+
 export interface QueryFilter {
   type?: string;
   roomType?: string;
@@ -16,10 +18,13 @@ export interface QueryFilter {
     AllowsPets?: boolean;
   };
   location?: string; // Single location
+  startDate?: Date;
+  endDate?: Date;
 }
 
 // Define the criteria function
-function makeCriteria(query: QueryFilter): Record<string, any> {
+
+async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
   const res: Record<string, any> = {};
 
   // Type
@@ -78,6 +83,7 @@ function makeCriteria(query: QueryFilter): Record<string, any> {
       : query.amenities.split(","); // Correctly split by comma
     res.amenities = { $in: amenities };
   }
+
   // Accessibility
   if (query.accessibility) {
     const accessibility = Array.isArray(query.accessibility)
@@ -106,6 +112,24 @@ function makeCriteria(query: QueryFilter): Record<string, any> {
       { "loc.city": { $regex: query.location, $options: "i" } },
       { "loc.address": { $regex: query.location, $options: "i" } },
     ];
+  }
+
+  // Date Availability
+  if (query.startDate && query.endDate) {
+    const startDate = new Date(query.startDate);
+    const endDate = new Date(query.endDate);
+
+    // Find homes that have no conflicting reservations
+    const reservedHomeIds = await Reservation.find({
+      $or: [
+        { startDate: { $lt: endDate, $gte: startDate } },
+        { endDate: { $gt: startDate, $lte: endDate } },
+        { startDate: { $lte: startDate }, endDate: { $gte: endDate } },
+      ],
+    }).distinct("home");
+
+    // Exclude homes that are already reserved
+    res._id = { $nin: reservedHomeIds };
   }
 
   console.log("Generated criteria:", JSON.stringify(res, null, 2)); // Additional debugging output
