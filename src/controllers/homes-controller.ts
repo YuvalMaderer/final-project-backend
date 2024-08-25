@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Home from "../models/home-model";
 import makeCriteria from "../utils/criteria";
 
+//////////////////////// Get random 24 homes ////////////////////////
 async function getHomesForHomePage(req: Request, res: Response) {
   try {
     const limit = 24;
@@ -37,6 +38,7 @@ async function getHomesForHomePage(req: Request, res: Response) {
   }
 }
 
+//////////////////////// Get home by Filters ////////////////////////
 async function getAllHomesByFilter(req: Request, res: Response) {
   const { query } = req;
   const criteria = await makeCriteria(req.query);
@@ -86,4 +88,38 @@ async function getAllHomesByFilter(req: Request, res: Response) {
   }
 }
 
-export { getHomesForHomePage, getAllHomesByFilter };
+//////////////////////// Get home by ID ////////////////////////
+async function getHomeById(req: Request, res: Response) {
+  const { homeId } = req.params;
+  try {
+    const home = await Home.findById(homeId);
+    // Check if any homes were found
+    if (!home) {
+      return res.status(404).json({
+        message: "homes-controller, getHomeById: No home found",
+      });
+    }
+
+    res.status(200).json(home);
+  } catch (error: any) {
+    console.error(
+      "homes-controller, getHomeById: Error fetching homes:",
+      error
+    );
+
+    if (error.name === "ValidationError") {
+      // Handle validation errors (e.g., malformed query criteria)
+      return res.status(400).json({
+        error: "homes-controller, getHomeById: Invalid criteria",
+      });
+    }
+
+    // Handle other potential errors
+    res.status(500).json({
+      error:
+        "homes-controller, getHomeById: Server error, please try again later",
+    });
+  }
+}
+
+export { getHomesForHomePage, getAllHomesByFilter, getHomeById };
