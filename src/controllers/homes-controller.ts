@@ -91,24 +91,9 @@ async function getAllHomesByFilter(req: Request, res: Response) {
 async function getAllHomesCountByFilter(req: Request, res: Response) {
   const { query } = req;
   const criteria = await makeCriteria(req.query);
-  let page: number = Number(query.page) || 1;
-  if (page < 1) page = 1;
-
-  const limit: number = Number(query.limit) || 18;
-  const startIndex = (page - 1) * limit || 0;
 
   try {
-    // Validate query parameters if needed
-    if (isNaN(page) || isNaN(limit)) {
-      return res.status(400).json({
-        error:
-          "homes-controller, getAllHomesCountByFilter: Invalid page or limit parameter",
-      });
-    }
-
-    const homesCount = await Home.countDocuments(criteria)
-      .skip(startIndex)
-      .limit(limit);
+    const homesCount = await Home.countDocuments(criteria);
 
     res.status(200).json(homesCount);
   } catch (error: any) {
