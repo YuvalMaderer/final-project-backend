@@ -50,17 +50,17 @@ async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
 
   // Bedrooms
   if (query.bedrooms !== undefined) {
-    res.bedrooms = query.bedrooms;
+    res.bedrooms = Number(query.bedrooms);
   }
 
   // Beds
   if (query.beds !== undefined) {
-    res.beds = query.beds;
+    res.beds = Number(query.beds);
   }
 
   // Bathrooms
   if (query.bathrooms !== undefined) {
-    res.bathrooms = query.bathrooms;
+    res.bathrooms = Number(query.bathrooms);
   }
 
   // Capacity
