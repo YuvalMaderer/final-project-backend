@@ -73,7 +73,7 @@ async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
     const languages = Array.isArray(query.hostLanguage)
       ? query.hostLanguage
       : query.hostLanguage.split(","); // Correctly split by comma
-    res["host.language"] = { $in: languages };
+    res["host.language"] = { $all: languages };
   }
 
   // Amenities

@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+ import { Schema, model, Document, Types } from "mongoose";
 
 // Define an interface representing a document in MongoDB.
 export interface IReservation extends Document {
