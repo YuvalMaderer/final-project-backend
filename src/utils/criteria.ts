@@ -12,7 +12,6 @@ export interface QueryFilter {
   amenities?: string | string[];
   capacity?: number;
   accessibility?: string | string[];
-
   InstantBook?: boolean;
   SelfCheckIn?: boolean;
   AllowsPets?: boolean;
