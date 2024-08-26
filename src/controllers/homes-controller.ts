@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Home from "../models/home-model";
 import makeCriteria from "../utils/criteria";
+import { CustomRequest } from "../middelware/auth-middelware";
 
 //////////////////////// Get random 24 homes ////////////////////////
 async function getHomesForHomePage(req: Request, res: Response) {
@@ -41,7 +42,7 @@ async function getHomesForHomePage(req: Request, res: Response) {
 //////////////////////// Get home by Filters ////////////////////////
 async function getAllHomesByFilter(req: Request, res: Response) {
   const { query } = req;
-  console.log(query)
+  console.log(query);
   const criteria = await makeCriteria(req.query);
   let page: number = Number(query.page) || 1;
   if (page < 1) page = 1;
@@ -152,11 +153,82 @@ async function getHomeById(req: Request, res: Response) {
   }
 }
 
+// Create a new home
+async function CreateNewHome(req: Request, res: Response) {
+  try {
+    const {
+      name,
+      type,
+      capacity,
+      imgUrls,
+      price,
+      summary,
+      amenities,
+      bathrooms,
+      bedrooms,
+      beds,
+      roomType,
+      host,
+      loc,
+      bookingOptions,
+      accessibility,
+    } = req.body;
 
+    if (
+      !name ||
+      !type ||
+      !capacity ||
+      !imgUrls ||
+      !price ||
+      !summary ||
+      !amenities ||
+      !bathrooms ||
+      !bedrooms ||
+      !beds ||
+      !roomType ||
+      !host ||
+      !loc ||
+      !bookingOptions ||
+      !accessibility
+    ) {
+      return res.status(400).json({
+        error:
+          "homes-controller CreateNewHome: All required fields must be provided",
+      });
+    }
+    const newHome = new Home({
+      name,
+      type,
+      capacity,
+      imgUrls,
+      price,
+      summary,
+      amenities,
+      bathrooms,
+      bedrooms,
+      beds,
+      roomType,
+      host,
+      loc,
+      bookingOptions,
+      accessibility,
+    });
+
+    // Save the new home to the database
+    const savedHome = await newHome.save();
+
+    // Return the created home
+    return res.status(201).json(savedHome);
+  } catch (err: any) {
+    console.error(`homes-controller CreateNewHome: ${err.message}`);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 
 export {
   getHomesForHomePage,
   getAllHomesByFilter,
   getHomeById,
   getAllHomesCountByFilter,
+  CreateNewHome,
 };

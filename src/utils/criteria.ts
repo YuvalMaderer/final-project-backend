@@ -12,11 +12,10 @@ export interface QueryFilter {
   amenities?: string | string[];
   capacity?: number;
   accessibility?: string | string[];
-  bookingOptions?: {
-    InstantBook?: boolean;
-    SelfCheckIn?: boolean;
-    AllowsPets?: boolean;
-  };
+
+  InstantBook?: boolean;
+  SelfCheckIn?: boolean;
+  AllowsPets?: boolean;
   location?: string; // Single location
   startDate?: Date;
   endDate?: Date;
@@ -81,7 +80,7 @@ async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
     const amenities = Array.isArray(query.amenities)
       ? query.amenities
       : query.amenities.split(","); // Correctly split by comma
-  
+
     res.amenities = { $all: amenities };
   }
 
@@ -94,16 +93,15 @@ async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
   }
 
   // Booking Options
-  if (query.bookingOptions) {
-    if (query.bookingOptions.InstantBook !== undefined) {
-      res["bookingOptions.InstantBook"] = query.bookingOptions.InstantBook;
-    }
-    if (query.bookingOptions.SelfCheckIn !== undefined) {
-      res["bookingOptions.SelfCheckIn"] = query.bookingOptions.SelfCheckIn;
-    }
-    if (query.bookingOptions.AllowsPets !== undefined) {
-      res["bookingOptions.AllowsPets"] = query.bookingOptions.AllowsPets;
-    }
+
+  if (query.InstantBook !== undefined) {
+    res["bookingOptions.InstantBook"] = query.InstantBook;
+  }
+  if (query.SelfCheckIn !== undefined) {
+    res["bookingOptions.SelfCheckIn"] = query.SelfCheckIn;
+  }
+  if (query.AllowsPets !== undefined) {
+    res["bookingOptions.AllowsPets"] = query.AllowsPets;
   }
 
   // Location
