@@ -153,7 +153,7 @@ async function getHomeById(req: Request, res: Response) {
   }
 }
 
-// Create a new home
+//////////////////////// Create new home ////////////////////////
 async function CreateNewHome(req: Request, res: Response) {
   try {
     const {
@@ -219,9 +219,57 @@ async function CreateNewHome(req: Request, res: Response) {
 
     // Return the created home
     return res.status(201).json(savedHome);
+    console.log("homes-controller CreateNewHome: create successfully");
   } catch (err: any) {
     console.error(`homes-controller CreateNewHome: ${err.message}`);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+//////////////////////// Update home ////////////////////////
+async function updateHome(req: CustomRequest, res: Response) {
+  const { userId } = req;
+  const { homeId } = req.params;
+  const updatedHome  = req.body;
+console.log(updatedHome);
+
+  try {
+    // Check if the home exists
+    const home = await Home.findById(homeId);
+    if (!home) {
+      return res.status(404).json({
+        error: "homes-controller updateHome: Home not found",
+      });
+    }
+
+    // Check if the user is the owner of the home
+    if (home.host._id.toString() !== userId) {
+      return res.status(403).json({
+        error:
+          "homes-controller updateHome: Unauthorized - You do not own this home",
+      });
+    }
+
+    // Update the home
+    const updated = await Home.findOneAndUpdate(
+      { _id: homeId, "host._id": userId }, // Ensure the correct home and ownership
+      updatedHome, // The updates
+      { new: true } // Return the updated document
+    );
+
+    if (!updated) {
+      return res.status(500).json({
+        error: "homes-controller updateHome: Failed to update home",
+      });
+    }
+
+    // Return the updated home
+    return res.status(200).json(updated);
+  } catch (error: any) {
+    console.error(`homes-controller updateHome: ${error.message}`);
+    return res.status(500).json({
+      error: "homes-controller updateHome: An unexpected error occurred",
+    });
   }
 }
 
@@ -231,4 +279,5 @@ export {
   getHomeById,
   getAllHomesCountByFilter,
   CreateNewHome,
+  updateHome,
 };
