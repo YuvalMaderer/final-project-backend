@@ -1,17 +1,19 @@
 import mongoose, { Schema, model, Document } from "mongoose";
 
-interface IReview {
+export interface IRating {
+  Cleanliness: number;
+  Communication: number;
+  "Check-in": number;
+  Accuracy: number;
+  Location: number;
+  Value: number;
+}
+
+export interface IReview {
   at: string | Date;
   by: { id: string; fullname: string; imgUrl: string };
   txt: string;
-  rate: {
-    Cleanliness: number;
-    Communication: number;
-    "Check-in": number;
-    Accuracy: number;
-    location: number;
-    value: number;
-  };
+  rate: IRating;
 }
 
 interface ILocation {
