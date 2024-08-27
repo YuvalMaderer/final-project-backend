@@ -88,7 +88,7 @@ async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
     const accessibility = Array.isArray(query.accessibility)
       ? query.accessibility
       : query.accessibility.split(","); // Correctly split by comma
-    res.accessibility = { $in: accessibility };
+    res.accessibility = { $all: accessibility };
   }
 
   // Booking Options
