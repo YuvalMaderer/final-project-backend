@@ -2,6 +2,19 @@ import { Request, Response } from "express";
 import Home from "../models/home-model";
 import makeCriteria from "../utils/criteria";
 import { CustomRequest } from "../middelware/auth-middelware";
+import { v2 as cloudinaryV2 } from "cloudinary";
+import multer, { Multer } from "multer";
+import fs from "fs";
+
+
+cloudinaryV2.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const upload: Multer = multer({ dest: "uploads/" });
+
 
 //////////////////////// Get random 24 homes ////////////////////////
 async function getHomesForHomePage(req: Request, res: Response) {
@@ -196,11 +209,21 @@ async function CreateNewHome(req: Request, res: Response) {
           "homes-controller CreateNewHome: All required fields must be provided",
       });
     }
+
+    // Assuming imgUrls is an array of file paths to be uploaded to Cloudinary
+    const uploadedImages = await Promise.all(
+      imgUrls.map(async (url: string) => {
+        const result = await cloudinaryV2.uploader.upload(url);
+        fs.unlinkSync(url); // Remove the file from the local storage after uploading to Cloudinary
+        return result.secure_url;
+      })
+    );
+
     const newHome = new Home({
       name,
       type,
       capacity,
-      imgUrls,
+      imgUrls: uploadedImages, // Array of Cloudinary URLs
       price,
       summary,
       amenities,
@@ -217,9 +240,8 @@ async function CreateNewHome(req: Request, res: Response) {
     // Save the new home to the database
     const savedHome = await newHome.save();
 
-    // Return the created home
+    console.log("homes-controller CreateNewHome: created successfully");
     return res.status(201).json(savedHome);
-    console.log("homes-controller CreateNewHome: create successfully");
   } catch (err: any) {
     console.error(`homes-controller CreateNewHome: ${err.message}`);
     return res.status(500).json({ error: "Internal Server Error" });
