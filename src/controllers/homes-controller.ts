@@ -302,4 +302,5 @@ export {
   getAllHomesCountByFilter,
   CreateNewHome,
   updateHome,
+  upload,
 };

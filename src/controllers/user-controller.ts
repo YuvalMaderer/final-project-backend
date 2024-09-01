@@ -137,8 +137,7 @@ async function removeFromWishlist(req: Request, res: Response) {
   }
 
   async function getWishlistByName(req: Request, res: Response) {
-    const { title } = req.body;
-    const { userId } = req.query;
+    const { userId, title } = req.query;
 
     try {
       const user: IUser | null = await User.findById(userId).populate("wishlists");

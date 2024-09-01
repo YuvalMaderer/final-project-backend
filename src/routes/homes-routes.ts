@@ -6,6 +6,7 @@ import {
   getAllHomesCountByFilter,
   CreateNewHome,
   updateHome,
+  upload,
 } from "../controllers/homes-controller";
 import { verifyToken } from "../middelware/auth-middelware";
 
@@ -15,5 +16,5 @@ homeRoutes.get("/24homes", getHomesForHomePage);
 homeRoutes.get("/filters", getAllHomesByFilter);
 homeRoutes.get("/count", getAllHomesCountByFilter);
 homeRoutes.get("/:homeId", getHomeById);
-homeRoutes.post("/create", CreateNewHome);
+homeRoutes.post("/create", upload.array("image"), CreateNewHome);
 homeRoutes.patch("/update/:homeId", verifyToken, updateHome);
