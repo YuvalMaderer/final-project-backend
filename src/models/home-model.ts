@@ -30,9 +30,9 @@ interface IHost {
   _id: mongoose.Schema.Types.ObjectId;
   fullname: string;
   location: string;
-  about: string;
-  thumbnailUrl: string;
-  imgUrl: string;
+  about?: string;
+  thumbnailUrl?: string;
+  imgUrl?: string;
   isSuperhost: boolean;
 }
 
@@ -138,7 +138,6 @@ const hostSchema = new Schema<IHost>({
   },
   imgUrl: {
     type: String,
-    required: true,
   },
   isSuperhost: {
     type: Boolean,
