@@ -14,7 +14,7 @@ cloudinaryV2.config({
 
 const upload: Multer = multer({ dest: "uploads/" });
 
-interface MulterRequest extends Request {
+export interface MulterRequest extends Request {
   files: Express.Multer.File[]; // Changed from `file` to `files`
 }
 
