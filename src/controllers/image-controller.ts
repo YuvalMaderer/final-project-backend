@@ -15,7 +15,7 @@ cloudinaryV2.config({
 const upload: Multer = multer({ dest: "uploads/" });
 
 interface MulterRequest extends Request {
-  file: Express.Multer.File;
+  files: Express.Multer.File[]; // Changed from `file` to `files`
 }
 
 const uploadImage = async (
@@ -23,10 +23,20 @@ const uploadImage = async (
   res: Response
 ): Promise<void> => {
   try {
-    const result = await cloudinaryV2.uploader.upload(req.file.path);
-    fs.unlinkSync(req.file.path); // Remove the file from the local storage after uploading to Cloudinary
-    res.status(200).json({ success: true, imageUrl: result.secure_url });
+    const fileUploadPromises = req.files.map(async (file) => {
+      const result = await cloudinaryV2.uploader.upload(file.path);
+      fs.unlinkSync(file.path); // Remove the file from the local storage after uploading to Cloudinary
+      return result.secure_url;
+    });
+
+    // Wait for all file uploads to complete
+    const imageUrls = await Promise.all(fileUploadPromises);
+
+    res.status(200).json({ success: true, imageUrls });
   } catch (error) {
     res.status(500).json({ success: false, message: (error as Error).message });
   }
 };
+
+// Export your middleware and handler
+export { upload, uploadImage };

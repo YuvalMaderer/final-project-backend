@@ -2,19 +2,6 @@ import { Request, Response } from "express";
 import Home from "../models/home-model";
 import makeCriteria from "../utils/criteria";
 import { CustomRequest } from "../middelware/auth-middelware";
-import { v2 as cloudinaryV2 } from "cloudinary";
-import multer, { Multer } from "multer";
-import fs from "fs";
-
-
-cloudinaryV2.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
-
-const upload: Multer = multer({ dest: "uploads/" });
-
 
 //////////////////////// Get random 24 homes ////////////////////////
 async function getHomesForHomePage(req: Request, res: Response) {
@@ -210,25 +197,11 @@ async function CreateNewHome(req: Request, res: Response) {
       });
     }
 
-    // Upload images to Cloudinary and store the secure URLs
-    const uploadedImages = await Promise.all(
-      imgUrls.map(async (url: string) => {
-        try {
-          const result = await cloudinaryV2.uploader.upload(url);
-          fs.unlinkSync(url); // Remove the file from local storage
-          return result.secure_url;
-        } catch (err: any) {
-          console.error(`homes-controller CreateNewHome: Failed to upload ${url} to Cloudinary - ${err.message}`);
-          throw new Error("Failed to upload images to Cloudinary");
-        }
-      })
-    );
-
     const newHome = new Home({
       name,
       type,
       capacity,
-      imgUrls: uploadedImages, // Array of Cloudinary URLs
+      imgUrls,
       price,
       summary,
       amenities,
@@ -307,5 +280,4 @@ export {
   getAllHomesCountByFilter,
   CreateNewHome,
   updateHome,
-  upload,
 };
