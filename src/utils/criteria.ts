@@ -130,8 +130,6 @@ async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
     res._id = { $nin: reservedHomeIds };
   }
 
-  console.log("Generated criteria:", JSON.stringify(res, null, 2)); // Additional debugging output
-
   return res;
 }
 

@@ -7,6 +7,7 @@ import { connectDB } from "./config/db";
 import { authRoutes } from "./routes/auth-routes";
 import { homeRoutes } from "./routes/homes-routes";
 import { reservationRoutes } from "./routes/reservation-routes";
+import { userRoutes } from "./routes/user-routes";
 // import socketMiddleware from "./middelware/auth-req";
 
 const PORT = process.env.PORT || 3000;
@@ -33,6 +34,7 @@ async function main() {
   app.use("/api/auth", authRoutes);
   app.use("/api/homes", homeRoutes);
   app.use("/api/reservation", reservationRoutes);
+  app.use("/api/user", userRoutes);
 
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
