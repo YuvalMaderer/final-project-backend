@@ -210,12 +210,17 @@ async function CreateNewHome(req: Request, res: Response) {
       });
     }
 
-    // Assuming imgUrls is an array of file paths to be uploaded to Cloudinary
+    // Upload images to Cloudinary and store the secure URLs
     const uploadedImages = await Promise.all(
       imgUrls.map(async (url: string) => {
-        const result = await cloudinaryV2.uploader.upload(url);
-        fs.unlinkSync(url); // Remove the file from the local storage after uploading to Cloudinary
-        return result.secure_url;
+        try {
+          const result = await cloudinaryV2.uploader.upload(url);
+          fs.unlinkSync(url); // Remove the file from local storage
+          return result.secure_url;
+        } catch (err: any) {
+          console.error(`homes-controller CreateNewHome: Failed to upload ${url} to Cloudinary - ${err.message}`);
+          throw new Error("Failed to upload images to Cloudinary");
+        }
       })
     );
 
