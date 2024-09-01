@@ -230,8 +230,8 @@ async function CreateNewHome(req: Request, res: Response) {
 async function updateHome(req: CustomRequest, res: Response) {
   const { userId } = req;
   const { homeId } = req.params;
-  const updatedHome  = req.body;
-console.log(updatedHome);
+  const updatedHome = req.body;
+  console.log(updatedHome);
 
   try {
     // Check if the home exists
