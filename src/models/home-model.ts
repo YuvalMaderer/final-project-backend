@@ -168,7 +168,7 @@ const homeSchema = new Schema<IHome>({
   },
   amenities: {
     type: [String],
-    required: true,
+    default:[]
   },
   bathrooms: {
     type: Number,

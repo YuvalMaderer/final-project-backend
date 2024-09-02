@@ -177,14 +177,16 @@ async function CreateNewHome(req: Request, res: Response) {
     if (
       !name ||
       !type ||
-      !capacity ||
+      capacity == null ||
       !imgUrls ||
-      !price ||
+      imgUrls.length === 0 ||
+      price == null ||
       !summary ||
       !amenities ||
-      !bathrooms ||
-      !bedrooms ||
-      !beds ||
+      amenities.length === 0 ||
+      bathrooms == null ||
+      bedrooms == null ||
+      beds == null ||
       !roomType ||
       !host ||
       !loc ||
@@ -192,8 +194,24 @@ async function CreateNewHome(req: Request, res: Response) {
       !accessibility
     ) {
       return res.status(400).json({
-        error:
-          "homes-controller CreateNewHome: All required fields must be provided",
+        error: `Validation failed. Please ensure all fields are provided and correctly formatted.`,
+        missingFields: {
+          name: !name,
+          type: !type,
+          capacity: capacity == null,
+          imgUrls: !imgUrls || imgUrls.length === 0,
+          price: price == null,
+          summary: !summary,
+          amenities: !amenities || amenities.length === 0,
+          bathrooms: bathrooms == null,
+          bedrooms: bedrooms == null,
+          beds: beds == null,
+          roomType: !roomType,
+          host: !host,
+          loc: !loc,
+          bookingOptions: !bookingOptions,
+          accessibility: !accessibility,
+        },
       });
     }
 
@@ -215,13 +233,11 @@ async function CreateNewHome(req: Request, res: Response) {
       accessibility,
     });
 
-    // Save the new home to the database
     const savedHome = await newHome.save();
-
-    console.log("homes-controller CreateNewHome: created successfully");
+    console.log("Home created successfully:", savedHome);
     return res.status(201).json(savedHome);
   } catch (err: any) {
-    console.error(`homes-controller CreateNewHome: ${err.message}`);
+    console.error(`Error creating new home: ${err.message}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

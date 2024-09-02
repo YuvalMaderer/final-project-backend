@@ -29,7 +29,7 @@ const seedUsersHomesReservations = async () => {
     // Clear existing users, homes, and reservations
     await User.deleteMany({});
     await Home.deleteMany({});
-    await Reservation.deleteMany({});
+    await Reservation.deleteMany({}); 
 
     // Hash the password
     const hashedPassword = await bcrypt.hash("password123", 10);
