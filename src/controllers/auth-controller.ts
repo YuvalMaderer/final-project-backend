@@ -13,8 +13,6 @@ import { CustomRequest } from "../middelware/auth-middelware";
 const SALT_ROUNDS = 10; // Number of rounds to generate salt. 10 is recommended value
 
 export async function register(req: Request, res: Response) {
-  console.log("Register endpoint hit");
-
   try {
     const { username, password, email, firstName, lastName } = req.body;
 
@@ -48,10 +46,9 @@ export async function logIn(req: Request, res: Response) {
     const { email, password } = req.body;
 
     // Log input details
-    console.log("Login attempt for email:", email);
 
     const user = await User.findOne({ email });
-    console.log("User found");
+    ("User found");
 
     if (!user) {
       return res.status(401).json({ error: "Authentication failed" });
@@ -60,7 +57,7 @@ export async function logIn(req: Request, res: Response) {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      console.log("password match failed");
+      ("password match failed");
 
       return res.status(401).json({ error: "Authentication failed" });
     }
@@ -77,14 +74,14 @@ export async function logIn(req: Request, res: Response) {
     // Send token in response to the client, not the user object!
     res.status(200).json({ token });
   } catch (error: any) {
-    console.log("Login error:", error.message);
+    ("Login error:", error.message);
     res.status(500).json({ error: "Login failed" });
   }
 }
 
 export async function getUserById(req: CustomRequest, res: Response) {
   const { userId } = req;
-  console.log(userId);
+  (userId);
 
   try {
     const user = await User.findById(userId);

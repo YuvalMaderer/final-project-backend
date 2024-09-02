@@ -12,6 +12,10 @@ cloudinaryV2.config({
   api_secret: process.env.API_SECRET,
 });
 
+console.log(process.env.API_KEY);
+console.log(process.env.API_SECRET);
+
+
 const upload: Multer = multer({ dest: "uploads/" });
 
 export interface MulterRequest extends Request {

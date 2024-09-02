@@ -12,6 +12,7 @@ interface GoogleCredential {
   email: string;
   given_name: string;
   family_name: string;
+  picture: string
 }
 
 interface VerifyGoogleRequest extends Request {
@@ -65,6 +66,7 @@ async function signWithGoogle(req: SignWithGoogleRequest, res: Response) {
     email,
     given_name: firstName,
     family_name: lastName,
+    picture: picture
   } = credentialDecoded;
 
   try {
@@ -75,9 +77,12 @@ async function signWithGoogle(req: SignWithGoogleRequest, res: Response) {
         SALT_ROUNDS
       );
       user = new User({
-        fullName: `${firstName} ${lastName}`,
         email,
         password: hashedPassword,
+        firstName,
+        lastName,
+        birthday: new Date(),
+        picture: picture
       });
       await user.save();
     }

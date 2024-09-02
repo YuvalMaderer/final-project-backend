@@ -9,6 +9,7 @@ import { homes } from "./homes"; // Assuming homes.ts exports an array of homes
 dotenv.config(); // Load environment variables from .env file
 
 const mongoUri = process.env.MONGO_URI;
+console.log(mongoUri)
 
 if (!mongoUri) {
   throw new Error("MONGO_URI is not defined in the environment variables");
