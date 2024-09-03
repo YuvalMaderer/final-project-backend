@@ -40,7 +40,6 @@ export async function register(req: Request, res: Response) {
   }
 }
 
-
 export async function logIn(req: Request, res: Response) {
   try {
     const { email, password } = req.body;
@@ -74,14 +73,14 @@ export async function logIn(req: Request, res: Response) {
     // Send token in response to the client, not the user object!
     res.status(200).json({ token });
   } catch (error: any) {
-    ("Login error:", error.message);
+    console.log("Login error:", error.message);
     res.status(500).json({ error: "Login failed" });
   }
 }
 
 export async function getUserById(req: CustomRequest, res: Response) {
   const { userId } = req;
-  (userId);
+  userId;
 
   try {
     const user = await User.findById(userId);
