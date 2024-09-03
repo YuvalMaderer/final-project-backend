@@ -5,16 +5,16 @@ export interface QueryFilter {
   roomType?: string;
   minPrice?: number;
   maxPrice?: number;
-  bedrooms?: number;
-  beds?: number;
-  bathrooms?: number;
+  bedrooms?: number | string;
+  beds?: number | string;
+  bathrooms?: number | string;
   hostLanguage?: string | string[];
   amenities?: string | string[];
   capacity?: number;
   accessibility?: string | string[];
-  InstantBook?: boolean;
-  SelfCheckIn?: boolean;
-  AllowsPets?: boolean;
+  InstantBook?: boolean | string;
+  SelfCheckIn?: boolean | string;
+  AllowsPets?: boolean | string;
   location?: string; // Single location
   startDate?: Date;
   endDate?: Date;
@@ -47,17 +47,17 @@ async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
   }
 
   // Bedrooms
-  if (query.bedrooms !== undefined) {
+  if (query.bedrooms !== undefined && query.bedrooms !== "") {
     res.bedrooms = Number(query.bedrooms);
   }
 
   // Beds
-  if (query.beds !== undefined) {
+  if (query.beds !== undefined && query.beds !== "") {
     res.beds = Number(query.beds);
   }
 
   // Bathrooms
-  if (query.bathrooms !== undefined) {
+  if (query.bathrooms !== undefined && query.bathrooms !== "") {
     res.bathrooms = Number(query.bathrooms);
   }
 
@@ -93,13 +93,13 @@ async function makeCriteria(query: QueryFilter): Promise<Record<string, any>> {
 
   // Booking Options
 
-  if (query.InstantBook !== undefined) {
+  if (query.InstantBook !== undefined && query.InstantBook !== "") {
     res["bookingOptions.InstantBook"] = query.InstantBook;
   }
-  if (query.SelfCheckIn !== undefined) {
+  if (query.SelfCheckIn !== undefined && query.SelfCheckIn !== "") {
     res["bookingOptions.SelfCheckIn"] = query.SelfCheckIn;
   }
-  if (query.AllowsPets !== undefined) {
+  if (query.AllowsPets !== undefined && query.AllowsPets !== "") {
     res["bookingOptions.AllowsPets"] = query.AllowsPets;
   }
 

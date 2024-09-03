@@ -74,7 +74,6 @@ export async function logIn(req: Request, res: Response) {
     // Send token in response to the client, not the user object!
     res.status(200).json({ token });
   } catch (error: any) {
-    ("Login error:", error.message);
     res.status(500).json({ error: "Login failed" });
   }
 }
