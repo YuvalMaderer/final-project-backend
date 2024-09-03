@@ -81,16 +81,23 @@ async function getAllUserReservations(req: CustomRequest, res: Response) {
   const { userId } = req;
 
   try {
-    const userReservation = await Reservation.find({ user: userId });
+    const userReservations = await Reservation.find({ user: userId }).populate({
+      path: "home",
+      populate: {
+        path: "host",
+        select: "fullName", // Select the host's full name from the host document
+      },
+      select: "name", // Select the home name from the home document
+    });
 
-    if (!userReservation || userReservation.length === 0) {
+    if (!userReservations || userReservations.length === 0) {
       return res.status(404).json({
         error:
           "reservation-controller getAllUserReservations: No reservations found for this user.",
       });
     }
 
-    res.status(200).json(userReservation);
+    res.status(200).json(userReservations);
   } catch (error) {
     console.error(
       "reservation-controller getAllUserReservations: Error fetching user reservations:",
@@ -99,6 +106,40 @@ async function getAllUserReservations(req: CustomRequest, res: Response) {
     res.status(500).json({
       error:
         "reservation-controller getAllUserReservations: Internal server error",
+    });
+  }
+}
+//////////////////////// Getting all host Reservations ////////////////////////
+async function getAllHostReservations(req: CustomRequest, res: Response) {
+  const { userId } = req;
+
+  try {
+    const hostReservations = await Reservation.find({ host: userId })
+      .populate({
+        path: "user",
+        select: "firstName lastName", // Select only the firstName from the user document
+      })
+      .populate({
+        path: "home",
+        select: "name", // Select only the home name from the home document
+      });
+
+    if (!hostReservations || hostReservations.length === 0) {
+      return res.status(404).json({
+        error:
+          "reservation-controller getAllHostReservations: No reservations found for this host.",
+      });
+    }
+
+    res.status(200).json(hostReservations);
+  } catch (error) {
+    console.error(
+      "reservation-controller getAllHostReservations: Error fetching host reservations:",
+      error
+    );
+    res.status(500).json({
+      error:
+        "reservation-controller getAllHostReservations: Internal server error",
     });
   }
 }
@@ -229,6 +270,7 @@ async function deleteReservation(req: CustomRequest, res: Response) {
 export {
   createNewReservation,
   getAllUserReservations,
+  getAllHostReservations,
   getAllHomeReservations,
   updateReservationStatus,
   deleteReservation,

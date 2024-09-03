@@ -4,6 +4,7 @@ import {
   createNewReservation,
   deleteReservation,
   getAllHomeReservations,
+  getAllHostReservations,
   getAllUserReservations,
   updateReservationStatus,
 } from "../controllers/reservation-controller";
@@ -11,7 +12,8 @@ import { verifyToken } from "../middelware/auth-middelware";
 
 export const reservationRoutes = Router();
 
-reservationRoutes.get("/", verifyToken, getAllUserReservations);
+reservationRoutes.get("/user", verifyToken, getAllUserReservations);
+reservationRoutes.get("/host", verifyToken, getAllHostReservations);
 reservationRoutes.get("/:homeId", verifyToken, getAllHomeReservations);
 reservationRoutes.post(
   "/create",
