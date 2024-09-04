@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ChatRoom, { IChatRoom } from "../models/chat-room-model";
 import Chat, { IChat } from "../models/message-model";
 import mongoose from "mongoose";
+import { io } from "../index";
 
 // Create or find a chat room between two users
 async function findOrCreateChatroom(req: Request, res: Response) {
@@ -49,19 +50,27 @@ async function findOrCreateChatroom(req: Request, res: Response) {
 
 // Send a message
 async function sendMessage(req: Request, res: Response) {
-    const { roomId } = req.params;
-    const { senderId, message }: { senderId: string, message: string } = req.body;
-    
-    const chat: IChat = new Chat({ chatRoom: roomId, sender: senderId, message });
-    await chat.save();
-    
-    await ChatRoom.findByIdAndUpdate(roomId, {
-        $push: { messages: chat._id },
-        lastMessage: chat._id,
-        updatedAt: Date.now(),
-    }).exec();
-    
-    res.status(200).json(chat);
+  const { roomId } = req.params;
+  const { senderId, message }: { senderId: string, message: string } = req.body;
+  
+  try {
+      const chat: IChat = new Chat({ chatRoom: roomId, sender: senderId, message });
+      await chat.save();
+      
+      await ChatRoom.findByIdAndUpdate(roomId, {
+          $push: { messages: chat._id },
+          lastMessage: chat._id,
+          updatedAt: Date.now(),
+      }).exec();
+      
+      // Emit the new message to the chat room via Socket.IO
+      io.to(roomId).emit("message", chat);
+
+      res.status(200).json(chat);
+  } catch (error) {
+      console.error("Error sending message:", error);
+      res.status(500).json({ error: "An error occurred while sending the message" });
+  }
 }
 
 // Get chat history
