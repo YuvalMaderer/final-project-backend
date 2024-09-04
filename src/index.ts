@@ -10,6 +10,7 @@ import { reservationRoutes } from "./routes/reservation-routes";
 import { userRoutes } from "./routes/user-routes";
 import { uploadRoutes } from "./routes/image-route";
 import chatRouter from "./routes/chat-router";
+import notificationRoutes from './routes/notification-routes';
 // import socketMiddleware from "./middelware/auth-req";
 
 const PORT = process.env.PORT || 3000;
@@ -39,6 +40,7 @@ async function main() {
   app.use("/api/user", userRoutes);
   app.use("/api/images", uploadRoutes);
   app.use("/api/chat", chatRouter);
+  app.use('/api/notification', notificationRoutes);
 
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
