@@ -1,7 +1,6 @@
 import express, { Application, Express } from "express";
-
 import http from "http";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import cors from "cors";
 import { connectDB } from "./config/db";
 import { authRoutes } from "./routes/auth-routes";
@@ -12,6 +11,7 @@ import { uploadRoutes } from "./routes/image-route";
 import chatRouter from "./routes/chat-router";
 import notificationRoutes from './routes/notification-routes';
 // import socketMiddleware from "./middelware/auth-req";
+import { setupSocketIO } from "./socket"; // Import the Socket.IO setup
 
 const PORT = process.env.PORT || 3000;
 
@@ -24,6 +24,8 @@ export const io = new Server(server, {
     methods: ["GET", "POST", "PATCH"],
   },
 });
+
+setupSocketIO(io); // Set up Socket.IO
 
 async function main() {
   // Connect to database
