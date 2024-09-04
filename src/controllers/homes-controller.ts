@@ -42,7 +42,7 @@ async function getHomesForHomePage(req: Request, res: Response) {
 //////////////////////// Get home by Filters ////////////////////////
 async function getAllHomesByFilter(req: Request, res: Response) {
   const { query } = req;
-  console.log(query);
+
   const criteria = await makeCriteria(req.query);
   let page: number = Number(query.page) || 1;
   if (page < 1) page = 1;
@@ -89,6 +89,44 @@ async function getAllHomesByFilter(req: Request, res: Response) {
     });
   }
 }
+
+//////////////////////// Get home by host ////////////////////////
+async function getHomesByHost(req: CustomRequest, res: Response) {
+  const { userId } = req;
+
+  try {
+    const homes = await Home.find({ "host._id": userId });
+
+    // Check if any homes were found
+    if (homes.length === 0) {
+      return res.status(404).json({
+        message:
+          "homes-controller, getHomesByHost: No homes found for this host",
+      });
+    }
+
+    res.status(200).json(homes);
+  } catch (error: any) {
+    console.error(
+      "homes-controller, getHomesByHost: Error fetching homes for host",
+      error
+    );
+
+    if (error.name === "ValidationError") {
+      // Handle validation errors (e.g., malformed query criteria)
+      return res.status(400).json({
+        error: "homes-controller, getAllHomesByFilter: Invalid criteria",
+      });
+    }
+
+    // Handle other potential errors
+    res.status(500).json({
+      error:
+        "homes-controller, getHomesByHost: Server error, please try again later",
+    });
+  }
+}
+
 //////////////////////// Get homes count by Filters ////////////////////////
 async function getAllHomesCountByFilter(req: Request, res: Response) {
   const { query } = req;
@@ -296,4 +334,5 @@ export {
   getAllHomesCountByFilter,
   CreateNewHome,
   updateHome,
+  getHomesByHost,
 };
