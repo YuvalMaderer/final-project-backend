@@ -198,7 +198,7 @@ async function updateReservationStatus(req: CustomRequest, res: Response) {
     }
 
     // Check if the user is the host of the listing
-    if (listing.host.toString() !== userId) {
+    if (listing.host._id.toString() !== userId) {
       return res.status(403).json({
         error:
           "reservation-controller updateReservationStatus: You are not authorized to change the status of this reservation",
