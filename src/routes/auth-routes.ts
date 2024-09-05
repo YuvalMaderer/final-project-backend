@@ -9,7 +9,6 @@ import {
   register,
   logIn,
   getUserById,
-  getAllUsers,
 } from "../controllers/auth-controller";
 import { verifyToken } from "../middelware/auth-middelware";
 import { signWithGoogle, verifyGoogle } from "../controllers/google-controller";
@@ -26,4 +25,3 @@ authRoutes.post("/register", register);
 authRoutes.post("/login", logIn);
 authRoutes.get("/loggedInUser", verifyToken, getUserById);
 authRoutes.post("/google", typedVerifyGoogle, typedSignGoogle);
-// authRoutes.get("/", verifyToken, getAllUsers);

@@ -14,8 +14,6 @@ cloudinaryV2.config({
 
 console.log(process.env.CLOUD_NAME);
 
-
-
 const upload: Multer = multer({ dest: "uploads/" });
 
 export interface MulterRequest extends Request {
