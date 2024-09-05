@@ -284,45 +284,43 @@ async function CreateNewHome(req: Request, res: Response) {
 async function updateHome(req: CustomRequest, res: Response) {
   const { userId } = req;
   const { homeId } = req.params;
-  const updatedHome = req.body;
-  console.log(updatedHome);
+  const { updatedHome } = req.body;
 
   try {
     // Check if the home exists
     const home = await Home.findById(homeId);
     if (!home) {
       return res.status(404).json({
-        error: "homes-controller updateHome: Home not found",
+        error: "Home not found",
       });
     }
 
     // Check if the user is the owner of the home
     if (home.host._id.toString() !== userId) {
       return res.status(403).json({
-        error:
-          "homes-controller updateHome: Unauthorized - You do not own this home",
+        error: "Unauthorized - You do not own this home",
       });
     }
 
-    // Update the home
+    // Ensure only specific fields are updated using $set
     const updated = await Home.findOneAndUpdate(
-      { _id: homeId, "host._id": userId }, // Ensure the correct home and ownership
-      updatedHome, // The updates
+      { _id: homeId, "host._id": userId }, // Ensure correct home and ownership
+      { $set: updatedHome }, // Apply the update explicitly using $set
       { new: true } // Return the updated document
     );
 
     if (!updated) {
       return res.status(500).json({
-        error: "homes-controller updateHome: Failed to update home",
+        error: "Failed to update home",
       });
     }
 
     // Return the updated home
     return res.status(200).json(updated);
   } catch (error: any) {
-    console.error(`homes-controller updateHome: ${error.message}`);
+    console.error(`Error updating home: ${error.message}`);
     return res.status(500).json({
-      error: "homes-controller updateHome: An unexpected error occurred",
+      error: "An unexpected error occurred",
     });
   }
 }
