@@ -14,7 +14,7 @@ export const reservationRoutes = Router();
 
 reservationRoutes.get("/user", verifyToken, getAllUserReservations);
 reservationRoutes.get("/host", verifyToken, getAllHostReservations);
-reservationRoutes.get("/:homeId", verifyToken, getAllHomeReservations);
+reservationRoutes.get("/:homeId", getAllHomeReservations);
 reservationRoutes.post(
   "/create",
   verifyToken,
