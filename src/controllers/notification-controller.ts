@@ -71,14 +71,19 @@ async function getNotificationById(req: Request, res: Response) {
 }
 
 // Update a notification
-async function updateNotification(req: Request, res: Response) {
+async function updateReadStatus(req: Request, res: Response) {
     try {
         const { id } = req.params;
-        const { message, read } = req.body;
+        const { read } = req.body;
+
+        // Ensure that the 'read' property is a boolean
+        if (typeof read !== 'boolean') {
+            return res.status(400).json({ error: 'The read status must be a boolean' });
+        }
 
         const updatedNotification: INotification | null = await Notification.findByIdAndUpdate(
             id,
-            { message, read },
+            { read },
             { new: true }
         ).exec();
 
@@ -115,6 +120,6 @@ export {
     createUserNotification,
     getNotifications,
     getNotificationById,
-    updateNotification,
+    updateReadStatus,
     deleteNotification
 };

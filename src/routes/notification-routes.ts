@@ -3,7 +3,7 @@ import {
     createUserNotification,
     getNotifications,
     getNotificationById,
-    updateNotification,
+    updateReadStatus,
     deleteNotification
 } from '../controllers/notification-controller';
 
@@ -19,7 +19,7 @@ router.get('/:userId', getNotifications);
 router.get('/notification/:id', getNotificationById);
 
 // Route to update a notification
-router.patch('/:id', updateNotification);
+router.patch('/read/:id', updateReadStatus);
 
 // Route to delete a notification
 router.delete('/:id', deleteNotification);
