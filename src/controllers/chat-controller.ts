@@ -77,6 +77,10 @@ async function sendMessage(req: Request, res: Response) {
 async function getChatHistory(req: Request, res: Response) {
     const { roomId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(roomId)) {
+        return res.status(400).json({ message: "Invalid room ID" });
+    }
+
     const chatRoom: IChatRoom | null = await ChatRoom.findById(roomId)
       .populate('messages')
       .populate('participants', 'name email firstName lastName')
