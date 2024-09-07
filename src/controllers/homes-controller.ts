@@ -325,6 +325,48 @@ async function updateHome(req: CustomRequest, res: Response) {
   }
 }
 
+//////////////////////// Delete home by id ////////////////////////
+async function deleteHomeById(req: CustomRequest, res: Response) {
+  const { userId } = req;
+  const { homeId } = req.params;
+
+  try {
+    // Check if the home exists
+    const home = await Home.findById(homeId);
+    if (!home) {
+      return res.status(404).json({
+        error: "Home not found",
+      });
+    }
+
+    // Check if the user is the owner of the home
+    if (home.host._id.toString() !== userId) {
+      return res.status(403).json({
+        error: "Unauthorized - You do not own this home",
+      });
+    }
+
+    // Ensure only specific fields are updated using $set
+    const homeToDelete = await Home.findOneAndDelete(
+      { _id: homeId, "host._id": userId } // Ensure correct home and ownership
+    );
+
+    if (!homeToDelete) {
+      return res.status(500).json({
+        error: "Failed to delete home",
+      });
+    }
+
+    // Return the updated home
+    return res.status(200).json(homeToDelete);
+  } catch (error: any) {
+    console.error(`Error deleting home: ${error.message}`);
+    return res.status(500).json({
+      error: "An unexpected error occurred",
+    });
+  }
+}
+
 export {
   getHomesForHomePage,
   getAllHomesByFilter,
@@ -333,4 +375,5 @@ export {
   CreateNewHome,
   updateHome,
   getHomesByHost,
+  deleteHomeById,
 };

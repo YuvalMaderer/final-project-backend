@@ -7,6 +7,7 @@ import {
   CreateNewHome,
   updateHome,
   getHomesByHost,
+  deleteHomeById,
 } from "../controllers/homes-controller";
 import { verifyToken } from "../middelware/auth-middelware";
 
@@ -19,3 +20,4 @@ homeRoutes.get("/count", getAllHomesCountByFilter);
 homeRoutes.get("/:homeId", getHomeById);
 homeRoutes.post("/create", verifyToken, CreateNewHome);
 homeRoutes.patch("/update/:homeId", verifyToken, updateHome);
+homeRoutes.patch("/delete/:homeId", verifyToken, deleteHomeById);
